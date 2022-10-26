@@ -1,117 +1,102 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {View, Text} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import CustomHeaderLeft from './src/components/CustomHeaderLeft';
+import CustomHeaderTitle from './src/components/CustomHeaderTitle';
+import CustomHeaderRight from './src/components/CustomHeaderRight';
 
-/* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
- * LTI update could not be added via codemod */
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
+import HomeScreen from './src/screens/HomeScreen';
+import TasksScreen from './src/screens/TasksScreen';
+import TaskDetailScreen from './src/screens/TaskDetailScreen';
+import TaskAddScreen from './src/screens/TaskAddScreen';
+import TaskUpdateScreen from './src/screens/TaskUpdateScreen';
+import MembersScreen from './src/screens/MembersScreen';
+import MemberDetailScreen from './src/screens/MemberDetailScreen';
+import MemberAddScreen from './src/screens/MemberAddScreen';
+import MemberUpdateScreen from './src/screens/MemberUpdateScreen';
+
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function HomeTabs() {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+    <Tab.Navigator
+      screenOptions={({route}) => ({
+        headerShown: false,
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+          if (route.name === 'HomeTab') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'TasksTab') {
+            iconName = focused ? 'list-circle' : 'list';
+          } else if (route.name === 'MembersTab') {
+            iconName = focused ? 'people-circle' : 'people-circle-outline';
+          }
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+          // You can return any component that you like here!
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'tomato',
+        tabBarInactiveTintColor: 'gray',
+      })}>
+      <Tab.Screen
+        name="HomeTab"
+        component={HomeScreen}
+        options={{title: 'Home'}}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      <Tab.Screen
+        name="TasksTab"
+        component={TasksScreen}
+        options={{title: 'Tasks'}}
+      />
+      <Tab.Screen
+        name="MembersTab"
+        component={MembersScreen}
+        options={{title: 'Members'}}
+      />
+    </Tab.Navigator>
   );
-};
+}
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-export default App;
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#00a0db',
+            color: 'white',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          // headerLeft: props => <CustomHeaderLeft {...props} />,
+          headerTitle: props => <CustomHeaderTitle {...props} />,
+          headerRight: props => <CustomHeaderRight {...props} />,
+        }}>
+        <Stack.Screen name="Home" component={HomeTabs} />
+        <Stack.Screen name="Tasks" component={TasksScreen} />
+        <Stack.Screen name="Members" component={MembersScreen} />
+        <Stack.Screen name="TaskDetailScreen" component={TaskDetailScreen} />
+        <Stack.Screen name="TaskAddScreen" component={TaskAddScreen} />
+        <Stack.Screen name="TaskUpdateScreen" component={TaskUpdateScreen} />
+        <Stack.Screen
+          name="MemberDetailScreen"
+          component={MemberDetailScreen}
+        />
+        <Stack.Screen name="MemberAddScreen" component={MemberAddScreen} />
+        <Stack.Screen
+          name="MemberUpdateScreen"
+          component={MemberUpdateScreen}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
