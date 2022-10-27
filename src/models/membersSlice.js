@@ -18,7 +18,7 @@ export const fetchMembers = createAsyncThunk(
   'members/fetchMembers',
   async () => {
     const token = selectUserToken(store.getState());
-    console.log('token:', token);
+    // console.log('token:', token);
     await wait(WAITING_TIME);
     const response = await fetch(`${API_URL_MEMBER}`, {
       headers: {
@@ -30,6 +30,7 @@ export const fetchMembers = createAsyncThunk(
       throw new Error(`${response.status} ${response.statusText}`);
     }
     const res = await response.json();
+    // console.log('fetchMembers:', res);
     return getMemberObjectListSerializable(res.members);
   },
 );
@@ -38,7 +39,7 @@ export const addNewMember = createAsyncThunk(
   'members/addNewMember',
   async data => {
     const token = selectUserToken(store.getState());
-    console.log('token:', token);
+    // console.log('token:', token);
     await wait(WAITING_TIME);
     const response = await fetch(`${API_URL_MEMBER}`, {
       method: 'POST',
@@ -61,7 +62,7 @@ export const updateMember = createAsyncThunk(
   'members/updateMember',
   async ({id, data}) => {
     const token = selectUserToken(store.getState());
-    console.log('token:', token);
+    // console.log('token:', token);
     console.log(`id=${id}, data=${data?.name ? data.name : data?.id}`);
     await wait(WAITING_TIME);
     const response = await fetch(`${API_URL_MEMBER}${id}/`, {
@@ -85,7 +86,7 @@ export const deleteMember = createAsyncThunk(
   'members/deleteMember',
   async ({id}) => {
     const token = selectUserToken(store.getState());
-    console.log('token:', token);
+    // console.log('token:', token);
     console.log(`id=${id}`);
     await wait(WAITING_TIME);
     const response = await fetch(`${API_URL_MEMBER}${id}/`, {

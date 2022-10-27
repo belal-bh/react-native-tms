@@ -22,7 +22,7 @@ import {store} from './store';
 
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async () => {
   const token = selectUserToken(store.getState());
-  console.log('token:', token);
+  // console.log('token:', token);
   await wait(WAITING_TIME);
   const response = await fetch(`${API_URL_TASK}`, {
     headers: {
@@ -34,12 +34,13 @@ export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async () => {
     throw new Error(`${response.status} ${response.statusText}`);
   }
   const res = await response.json();
+  // console.log('fetchTasks:', res);
   return getTaskObjectListSerializable(res.tasks);
 });
 
 export const addNewTask = createAsyncThunk('tasks/addNewTask', async data => {
   const token = selectUserToken(store.getState());
-  console.log('token:', token);
+  // console.log('token:', token);
   await wait(WAITING_TIME);
   const response = await fetch(`${API_URL_TASK}`, {
     method: 'POST',
@@ -61,7 +62,7 @@ export const updateTask = createAsyncThunk(
   'tasks/updateTask',
   async ({id, data}) => {
     const token = selectUserToken(store.getState());
-    console.log('token:', token);
+    // console.log('token:', token);
     console.log(
       `id=${id}, data=${data?.title ? data.title : data?.description}`,
     );
@@ -85,7 +86,7 @@ export const updateTask = createAsyncThunk(
 
 export const deleteTask = createAsyncThunk('tasks/deleteTask', async ({id}) => {
   const token = selectUserToken(store.getState());
-  console.log('token:', token);
+  // console.log('token:', token);
   console.log(`id=${id}`);
   await wait(WAITING_TIME);
   const response = await fetch(`${API_URL_TASK}${id}/`, {

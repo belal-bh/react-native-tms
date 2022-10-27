@@ -13,7 +13,7 @@ import {resetTasks} from './tasksSlice';
 import {resetMembers} from './membersSlice';
 
 export const loginUser = createAsyncThunk('user/loginUser', async data => {
-  console.log('data', data);
+  // console.log('data', data);
   await wait(WAITING_TIME);
   const response = await fetch(`${API_URL_AUTH_LOGIN}`, {
     method: 'POST',
@@ -26,6 +26,7 @@ export const loginUser = createAsyncThunk('user/loginUser', async data => {
     throw new Error(`${response.status} ${response.statusText}`);
   }
   const res = await response.json();
+  // console.log('loginUser:', res);
   const user = getUserObjectSerializable(res.user);
   const token = res.token;
   return {token, user};
@@ -46,6 +47,7 @@ export const registerUser = createAsyncThunk(
       throw new Error(`${response.status} ${response.statusText}`);
     }
     const res = await response.json();
+    // console.log('registerUser:', res);
     const user = getUserObjectSerializable(res.user);
     const token = res.token;
     return {token, user};
