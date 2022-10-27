@@ -15,12 +15,12 @@ export default MembersScreen = () => {
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>MembersScreen!</Text>
       <Button
-        title="Go to MemberDetailScreen"
-        onPress={() => navigation.navigate('MemberDetailScreen')}
+        title="Go to MemberDetail"
+        onPress={() => navigation.navigate('MemberDetail')}
       />
       <Button
-        title="Go to MemberAddScreen"
-        onPress={() => navigation.navigate('MemberAddScreen')}
+        title="Go to MemberAdd"
+        onPress={() => navigation.navigate('MemberAdd')}
       />
     </View>
   );

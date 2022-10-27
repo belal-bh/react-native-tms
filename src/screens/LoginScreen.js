@@ -1,5 +1,6 @@
-import React, {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
+import React, {useEffect} from 'react';
+
 import {
   View,
   StyleSheet,
@@ -9,14 +10,14 @@ import {
   Button,
 } from 'react-native';
 
-export default TaskDetailScreen = () => {
+export default LoginScreen = () => {
   const navigation = useNavigation();
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>TaskDetailScreen!</Text>
+      <Text>LoginScreen!</Text>
       <Button
-        title="Go to TaskUpdate"
-        onPress={() => navigation.navigate('TaskUpdate')}
+        title="Go to Signup Screen"
+        onPress={() => navigation.navigate('Register')}
       />
     </View>
   );

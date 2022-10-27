@@ -15,12 +15,12 @@ export default TasksScreen = () => {
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>TasksScreen!</Text>
       <Button
-        title="Go to TaskDetailScreen"
-        onPress={() => navigation.navigate('TaskDetailScreen')}
+        title="Go to TaskDetail"
+        onPress={() => navigation.navigate('TaskDetail')}
       />
       <Button
-        title="Go to TaskAddScreen"
-        onPress={() => navigation.navigate('TaskAddScreen')}
+        title="Go to TaskAdd"
+        onPress={() => navigation.navigate('TaskAdd')}
       />
     </View>
   );

@@ -5,10 +5,16 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import {store, persistor, clearAsyncStorage} from './src/models/store';
+import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
+
 import CustomHeaderLeft from './src/components/CustomHeaderLeft';
 import CustomHeaderTitle from './src/components/CustomHeaderTitle';
 import CustomHeaderRight from './src/components/CustomHeaderRight';
 
+import RegisterScreen from './src/screens/RegisterScreen';
+import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import TasksScreen from './src/screens/TasksScreen';
 import TaskDetailScreen from './src/screens/TaskDetailScreen';
@@ -64,39 +70,40 @@ function HomeTabs() {
 }
 
 export default function App() {
+  // clearAsyncStorage()
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#00a0db',
-            color: 'white',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          // headerLeft: props => <CustomHeaderLeft {...props} />,
-          headerTitle: props => <CustomHeaderTitle {...props} />,
-          headerRight: props => <CustomHeaderRight {...props} />,
-        }}>
-        <Stack.Screen name="Home" component={HomeTabs} />
-        <Stack.Screen name="Tasks" component={TasksScreen} />
-        <Stack.Screen name="Members" component={MembersScreen} />
-        <Stack.Screen name="TaskDetailScreen" component={TaskDetailScreen} />
-        <Stack.Screen name="TaskAddScreen" component={TaskAddScreen} />
-        <Stack.Screen name="TaskUpdateScreen" component={TaskUpdateScreen} />
-        <Stack.Screen
-          name="MemberDetailScreen"
-          component={MemberDetailScreen}
-        />
-        <Stack.Screen name="MemberAddScreen" component={MemberAddScreen} />
-        <Stack.Screen
-          name="MemberUpdateScreen"
-          component={MemberUpdateScreen}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="Home"
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: '#00a0db',
+                color: 'white',
+              },
+              headerTintColor: '#fff',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+              // headerLeft: props => <CustomHeaderLeft {...props} />,
+              headerTitle: props => <CustomHeaderTitle {...props} />,
+              headerRight: props => <CustomHeaderRight {...props} />,
+            }}>
+            <Stack.Screen name="Home" component={HomeTabs} />
+            <Stack.Screen name="Tasks" component={TasksScreen} />
+            <Stack.Screen name="Members" component={MembersScreen} />
+            <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
+            <Stack.Screen name="TaskAdd" component={TaskAddScreen} />
+            <Stack.Screen name="TaskUpdate" component={TaskUpdateScreen} />
+            <Stack.Screen name="MemberDetail" component={MemberDetailScreen} />
+            <Stack.Screen name="MemberAdd" component={MemberAddScreen} />
+            <Stack.Screen name="MemberUpdate" component={MemberUpdateScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
 }

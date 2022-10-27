@@ -16,8 +16,8 @@ export default MemberDetailScreen = () => {
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>MemberDetailScreen!</Text>
       <Button
-        title="Go to MemberUpdateScreen"
-        onPress={() => navigation.navigate('MemberUpdateScreen')}
+        title="Go to MemberUpdate"
+        onPress={() => navigation.navigate('MemberUpdate')}
       />
     </View>
   );
