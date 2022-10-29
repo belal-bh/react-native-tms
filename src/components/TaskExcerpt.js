@@ -16,9 +16,16 @@ import {resetTaskStateById, selectTaskById} from '../models/tasksSlice';
 export default TaskExcerpt = ({taskId, index}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const task = useSelector(state => selectTaskById(state, taskId));
 
-  // console.log(`task [${taskId}]:`, task);
+  const task = useSelector(state => selectTaskById(state, taskId));
+  // let task;
+  // try {
+  //   task = useSelector(state => selectTaskById(state, taskId));
+  // } catch (e) {
+  //   return null;
+  // }
+
+  console.log(`task [${taskId}]:`, task);
 
   const handleClickTaskDetail = () => {
     navigation.navigate('TaskDetail', {
@@ -26,28 +33,39 @@ export default TaskExcerpt = ({taskId, index}) => {
     });
   };
 
-  useEffect(() => {
-    dispatch(resetTaskStateById(taskId));
-  }, []);
+  // useEffect(() => {
+  //   if (task?.id) dispatch(resetTaskStateById(taskId));
+  // }, [task?.id]);
 
-  return (
+  return task ? (
     <View style={styles.itemViewContainer}>
       <View style={styles.item}>
-        <TouchableOpacity
-          style={styles.titleContainerView}
-          onPress={handleClickTaskDetail}>
+        <View style={styles.titleContainerView}>
           <Text style={styles.title}>
-            <Text>
-              {index + 1}
-              {'. '}
-            </Text>
-            <Text>
-              {task.title.length > 22
-                ? task.title.slice(0, 22) + '...'
-                : task.title}
-            </Text>
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+              }}
+              onPress={handleClickTaskDetail}>
+              <Text>
+                {index + 1}
+                {'. '}
+                {task.title.length > 22
+                  ? task.title.slice(0, 22) + '...'
+                  : task.title}
+              </Text>
+            </TouchableOpacity>
           </Text>
-        </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  ) : (
+    <View style={styles.itemViewContainer}>
+      <View style={styles.item}>
+        <View style={styles.titleContainerView}>
+          <Text style={styles.title}>Not deleted</Text>
+        </View>
       </View>
     </View>
   );
@@ -58,6 +76,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 5,
     // backgroundColor: 'red',
+    // width: '100%',
   },
   item: {
     flex: 1,
@@ -67,6 +86,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#c5c5c5',
     padding: 5,
     height: 50,
+    width: '100%',
     borderRadius: 5,
   },
   titleContainerView: {

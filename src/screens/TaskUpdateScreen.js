@@ -1,16 +1,8 @@
-import React, {useEffect} from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import React from 'react';
 
-export default TaskUpdateScreen = () => {
-  return (
-    <View>
-      <Text>TaskUpdateScreen</Text>
-    </View>
-  );
+import TaskForm from '../components/TaskForm';
+
+export default TaskUpdateScreen = ({route}) => {
+  const taskId = route.params?.taskId;
+  return <TaskForm taskId={taskId} />;
 };

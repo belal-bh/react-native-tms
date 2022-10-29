@@ -238,7 +238,6 @@ const membersSlice = createSlice({
           error: null,
         },
       });
-      membersAdapter.removeOne(state, id);
     },
     [deleteMember.rejected]: (state, action) => {
       const id = action.meta.arg.id;

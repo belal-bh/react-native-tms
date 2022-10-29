@@ -133,6 +133,7 @@ const tasksSlice = createSlice({
         error: null,
       },
     },
+    requiredReload: true,
   }),
   reducers: {
     resetAddTaskState(state, action) {
@@ -155,6 +156,13 @@ const tasksSlice = createSlice({
         changes: {status: 'idle', error: null},
       });
     },
+    resetTaskRequiredReloadById(state, action) {
+      const taskId = action.payload;
+      tasksAdapter.updateOne(state, {
+        id: taskId,
+        changes: {requiredReload: false},
+      });
+    },
   },
   extraReducers: {
     [fetchTasks.pending]: (state, action) => {
@@ -166,6 +174,7 @@ const tasksSlice = createSlice({
         tasksAdapter.upsertMany(state, action);
         state.status = 'succeeded';
       }
+      state.requiredReload = false;
     },
     [fetchTasks.rejected]: (state, action) => {
       state.status = 'failed';
@@ -180,6 +189,7 @@ const tasksSlice = createSlice({
       // tasksAdapter.addOne(state, action.payload);
       console.log('addNewTask.fulfilled:', action.payload);
       state.extras.add.status = 'created';
+      state.requiredReload = true;
     },
     [addNewTask.rejected]: (state, action) => {
       state.extras.add.status = 'failed';
@@ -197,14 +207,17 @@ const tasksSlice = createSlice({
       });
     },
     [updateTask.fulfilled]: (state, action) => {
-      const {id} = action.meta.arg.id;
+      const id = action.meta.arg.id;
+      console.log('id======================', id);
       tasksAdapter.updateOne(state, {
         id,
         changes: {
           status: 'succeeded',
           error: null,
+          requiredReload: true,
         },
       });
+      state.requiredReload = true;
       console.log('updateTask.fulfilled:', action.payload);
     },
     [updateTask.rejected]: (state, action) => {
@@ -237,7 +250,8 @@ const tasksSlice = createSlice({
           error: null,
         },
       });
-      tasksAdapter.removeOne(state, id);
+      // tasksAdapter.removeOne(state, id); // this line cause the problem
+      state.requiredReload = true;
     },
     [deleteTask.rejected]: (state, action) => {
       const id = action.meta.arg.id;
@@ -253,6 +267,7 @@ const tasksSlice = createSlice({
   },
 });
 
+export const selectTasksRequiredReload = state => state.tasks.requiredReload;
 export const selectTasksStatus = state => state.tasks.status;
 export const selectTasksError = state => state.tasks.error;
 export const selectTasksStatusLoading = state =>
@@ -271,6 +286,7 @@ export const {
   tasksCleared,
   resetTasksState,
   resetTaskStateById,
+  resetTaskRequiredReloadById,
 } = tasksSlice.actions;
 
 export default tasksSlice.reducer;
@@ -278,7 +294,7 @@ export default tasksSlice.reducer;
 export const reloadAllTasks = () => async dispatch => {
   dispatch(resetTasksState());
   dispatch(resetTasksExtras());
-  // dispatch(tasksCleared());
+  dispatch(tasksCleared());
   dispatch(fetchTasks());
 };
 

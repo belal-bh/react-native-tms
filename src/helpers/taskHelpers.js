@@ -10,6 +10,7 @@ export const getTaskObjectSerializable = data => {
 
     status: 'idle',
     error: null,
+    requiredReload: false,
   };
   return task;
 };

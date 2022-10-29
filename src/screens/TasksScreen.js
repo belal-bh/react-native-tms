@@ -16,6 +16,7 @@ import {
   selectAllTasks,
   selectTaskIds,
   selectTasksError,
+  selectTasksRequiredReload,
   selectTasksStatusLoading,
 } from '../models/tasksSlice';
 
@@ -26,8 +27,11 @@ export default TasksScreen = () => {
   const dispatch = useDispatch();
   const taskIds = useSelector(selectTaskIds);
   // const tasks = useSelector(selectAllTasks);
+
   console.log('taskIds:', taskIds);
   // console.log('tasks:', tasks);
+
+  const requiredReload = useSelector(selectTasksRequiredReload);
 
   const isLoading = useSelector(selectTasksStatusLoading);
   const errorMessage = useSelector(selectTasksError);
@@ -40,6 +44,10 @@ export default TasksScreen = () => {
   useEffect(() => {
     dispatch(reloadAllTasks());
   }, []);
+
+  useEffect(() => {
+    if (requiredReload) dispatch(reloadAllTasks());
+  }, [requiredReload]);
 
   return (
     <View style={styles.mainContainer}>
@@ -91,7 +99,7 @@ export default TasksScreen = () => {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    // flex: 1,
+    flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     // backgroundColor: 'red',

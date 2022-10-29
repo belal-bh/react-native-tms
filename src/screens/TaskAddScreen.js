@@ -1,16 +1,7 @@
-import React, {useEffect} from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import React from 'react';
+
+import TaskForm from '../components/TaskForm';
 
 export default TaskAddScreen = () => {
-  return (
-    <View>
-      <Text>TaskAddScreen</Text>
-    </View>
-  );
+  return <TaskForm />;
 };
