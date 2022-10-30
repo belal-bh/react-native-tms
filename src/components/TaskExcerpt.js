@@ -48,7 +48,7 @@ export default TaskExcerpt = ({taskId, index}) => {
                 justifyContent: 'flex-start',
               }}
               onPress={handleClickTaskDetail}>
-              <Text>
+              <Text style={styles.title}>
                 {index + 1}
                 {'. '}
                 {task.title.length > 22
