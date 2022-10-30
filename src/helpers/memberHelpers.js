@@ -8,6 +8,7 @@ export const getMemberObjectSerializable = data => {
 
     status: 'idle',
     error: null,
+    requiredReload: false,
   };
   return member;
 };

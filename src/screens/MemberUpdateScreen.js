@@ -1,16 +1,8 @@
-import React, {useEffect} from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import React from 'react';
 
-export default MemberUpdateScreen = () => {
-  return (
-    <View>
-      <Text>MemberUpdateScreen</Text>
-    </View>
-  );
+import MemberForm from '../components/MemberForm';
+
+export default MemberUpdateScreen = ({route}) => {
+  const memberId = route.params?.memberId;
+  return <MemberForm memberId={memberId} />;
 };

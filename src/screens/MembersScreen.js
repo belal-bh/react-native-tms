@@ -15,6 +15,8 @@ import {
   selectMemberIds,
   selectMembersError,
   selectMembersStatusLoading,
+  selectMembersRequiredReload,
+  reloadAllMembers,
 } from '../models/membersSlice';
 
 import MemberExcerpt from '../components/MemberExcerpt';
@@ -25,6 +27,10 @@ export default MembersScreen = () => {
   const memberIds = useSelector(selectMemberIds);
   console.log('memberIds:', memberIds);
 
+  const requiredReload = useSelector(selectMembersRequiredReload);
+
+  // console.log('requiredReload:', requiredReload);
+
   const isLoading = useSelector(selectMembersStatusLoading);
   const errorMessage = useSelector(selectMembersError);
 
@@ -33,8 +39,12 @@ export default MembersScreen = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchMembers());
+    dispatch(reloadAllMembers());
   }, []);
+
+  useEffect(() => {
+    if (requiredReload) dispatch(reloadAllMembers());
+  }, [requiredReload]);
 
   return (
     <View style={styles.mainContainer}>

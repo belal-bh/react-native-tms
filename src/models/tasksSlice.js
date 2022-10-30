@@ -280,6 +280,28 @@ export const selectTasksExtrasAddStatus = state =>
   state.tasks.extras.add.status;
 export const selectTasksExtrasAddError = state => state.tasks.extras.add.error;
 
+export const selectTaskIdsByMemberId = (state, memberId) => {
+  const tasks = selectAllTasks(state);
+  const initialTaskIds = [];
+  const taskIds = tasks.reduce((pre, cur) => {
+    if (cur.memberId === memberId) pre.push(cur.id);
+    return pre;
+  }, initialTaskIds);
+  console.log(taskIds);
+  return taskIds;
+};
+
+export const selectNumberOfTasksByMemberId = (state, memberId) => {
+  const tasks = selectAllTasks(state);
+  let initialCount = 0;
+  const numberOfTasks = tasks.reduce((pre, cur) => {
+    if (cur.memberId === memberId) pre++;
+    return pre;
+  }, initialCount);
+  console.log(numberOfTasks);
+  return numberOfTasks;
+};
+
 export const {
   resetAddTaskState,
   resetTasksExtras,

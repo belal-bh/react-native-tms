@@ -1,16 +1,7 @@
-import React, {useEffect} from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import React from 'react';
+
+import MemberForm from '../components/MemberForm';
 
 export default MemberAddScreen = () => {
-  return (
-    <View>
-      <Text>MemberAddScreen</Text>
-    </View>
-  );
+  return <MemberForm />;
 };

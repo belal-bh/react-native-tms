@@ -13,9 +13,11 @@ import {useSelector, useDispatch} from 'react-redux';
 
 import {resetTaskStateById, selectTaskById} from '../models/tasksSlice';
 
-export default TaskExcerpt = ({taskId, index}) => {
+export default TaskExcerpt = ({taskId, index, disabledLink}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  disabledLink = disabledLink ? true : false;
 
   const task = useSelector(state => selectTaskById(state, taskId));
   // let task;
@@ -43,6 +45,7 @@ export default TaskExcerpt = ({taskId, index}) => {
         <View style={styles.titleContainerView}>
           <Text style={styles.title}>
             <TouchableOpacity
+              disabled={disabledLink}
               style={{
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
@@ -85,7 +88,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#c5c5c5',
     padding: 5,
-    height: 50,
+    // height: 50,
     width: '100%',
     borderRadius: 5,
   },

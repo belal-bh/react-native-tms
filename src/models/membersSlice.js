@@ -134,6 +134,7 @@ const membersSlice = createSlice({
         error: null,
       },
     },
+    requiredReload: true,
   }),
   reducers: {
     resetAddMemberState(state, action) {
@@ -156,6 +157,13 @@ const membersSlice = createSlice({
         changes: {status: 'idle', error: null},
       });
     },
+    resetMemberRequiredReloadById(action, state) {
+      const memberId = action.payload;
+      membersAdapter.updateOne(state, {
+        id: memberId,
+        changes: {requiredReload: false},
+      });
+    },
   },
   extraReducers: {
     [fetchMembers.pending]: (state, action) => {
@@ -167,6 +175,7 @@ const membersSlice = createSlice({
         membersAdapter.upsertMany(state, action);
         state.status = 'succeeded';
       }
+      state.requiredReload = false;
     },
     [fetchMembers.rejected]: (state, action) => {
       state.status = 'failed';
@@ -181,6 +190,7 @@ const membersSlice = createSlice({
       // membersAdapter.addOne(state, action.payload);
       console.log('addNewMember.fulfilled:', action.payload);
       state.extras.add.status = 'created';
+      state.requiredReload = true;
     },
     [addNewMember.rejected]: (state, action) => {
       state.extras.add.status = 'failed';
@@ -198,14 +208,16 @@ const membersSlice = createSlice({
       });
     },
     [updateMember.fulfilled]: (state, action) => {
-      const {id} = action.meta.arg.id;
+      const id = action.meta.arg.id;
       membersAdapter.updateOne(state, {
         id,
         changes: {
           status: 'succeeded',
           error: null,
+          requiredReload: true,
         },
       });
+      state.requiredReload = true;
       console.log('updateMember.fulfilled:', action.payload);
     },
     [updateMember.rejected]: (state, action) => {
@@ -238,6 +250,7 @@ const membersSlice = createSlice({
           error: null,
         },
       });
+      state.requiredReload = true;
     },
     [deleteMember.rejected]: (state, action) => {
       const id = action.meta.arg.id;
@@ -253,6 +266,8 @@ const membersSlice = createSlice({
   },
 });
 
+export const selectMembersRequiredReload = state =>
+  state.members.requiredReload;
 export const selectMembersStatus = state => state.members.status;
 export const selectMembersError = state => state.members.error;
 export const selectMembersStatusLoading = state =>
@@ -272,6 +287,7 @@ export const {
   membersCleared,
   resetMembersState,
   resetMemberStateById,
+  resetMemberRequiredReloadById,
 } = membersSlice.actions;
 
 export default membersSlice.reducer;
@@ -279,7 +295,7 @@ export default membersSlice.reducer;
 export const reloadAllMembers = () => async dispatch => {
   dispatch(resetMembersState());
   dispatch(resetMembersExtras());
-  // dispatch(membersCleared());
+  dispatch(membersCleared());
   dispatch(fetchMembers());
 };
 

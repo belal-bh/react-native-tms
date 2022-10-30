@@ -70,7 +70,7 @@ function HomeTabs() {
 }
 
 export default function App() {
-  // clearAsyncStorage();
+  clearAsyncStorage();
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
