@@ -8,13 +8,13 @@ import {API_URL_MEMBER, WAITING_TIME} from '../config';
 import {getMemberObjectListSerializable} from '../helpers/memberHelpers';
 import {wait} from '../helpers/helpers';
 
-import {selectUserToken} from './userSlice';
+import {selectUserToken, logoutAndResetStore} from './userSlice';
 import {store} from './store';
 
 export const fetchMembers = createAsyncThunk(
   'members/fetchMembers',
-  async () => {
-    const token = selectUserToken(store.getState());
+  async (params, {dispatch, getState}) => {
+    const token = selectUserToken(getState());
     // console.log('token:', token);
     await wait(WAITING_TIME);
     const response = await fetch(`${API_URL_MEMBER}`, {
@@ -24,7 +24,20 @@ export const fetchMembers = createAsyncThunk(
       },
     });
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const error = await response.json();
+      console.log('ERROR:', error);
+      if (response.status === 401) {
+        dispatch(logoutAndResetStore());
+        throw new Error(error?.msg);
+      } else if (response.status >= 400 && response.status < 500) {
+        if (error?.errors) {
+          const message = error?.errors.reduce((pre, cur) => {
+            return `${pre} ${cur.msg}.`;
+          }, '');
+          throw new Error(message);
+        }
+      }
+      throw new Error(error?.msg ? error.msg : 'Something went wrong.');
     }
     const res = await response.json();
     // console.log('fetchMembers:', res);
@@ -34,8 +47,8 @@ export const fetchMembers = createAsyncThunk(
 
 export const addNewMember = createAsyncThunk(
   'members/addNewMember',
-  async data => {
-    const token = selectUserToken(store.getState());
+  async (data, {dispatch, getState}) => {
+    const token = selectUserToken(getState());
     // console.log('token:', token);
     await wait(WAITING_TIME);
     const response = await fetch(`${API_URL_MEMBER}`, {
@@ -47,7 +60,20 @@ export const addNewMember = createAsyncThunk(
       },
     });
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const error = await response.json();
+      console.log('ERROR:', error);
+      if (response.status === 401) {
+        dispatch(logoutAndResetStore());
+        throw new Error(error?.msg);
+      } else if (response.status >= 400 && response.status < 500) {
+        if (error?.errors) {
+          const message = error?.errors.reduce((pre, cur) => {
+            return `${pre} ${cur.msg}.`;
+          }, '');
+          throw new Error(message);
+        }
+      }
+      throw new Error(error?.msg ? error.msg : 'Something went wrong.');
     }
     const res = await response.json();
     // return getMemberObjectSerializable(res);
@@ -57,8 +83,8 @@ export const addNewMember = createAsyncThunk(
 
 export const updateMember = createAsyncThunk(
   'members/updateMember',
-  async ({id, data}) => {
-    const token = selectUserToken(store.getState());
+  async ({id, data}, {dispatch, getState}) => {
+    const token = selectUserToken(getState());
     // console.log('token:', token);
     console.log(`id=${id}, data=${data?.name ? data.name : data?.id}`);
     await wait(WAITING_TIME);
@@ -71,7 +97,20 @@ export const updateMember = createAsyncThunk(
       },
     });
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const error = await response.json();
+      console.log('ERROR:', error);
+      if (response.status === 401) {
+        dispatch(logoutAndResetStore());
+        throw new Error(error?.msg);
+      } else if (response.status >= 400 && response.status < 500) {
+        if (error?.errors) {
+          const message = error?.errors.reduce((pre, cur) => {
+            return `${pre} ${cur.msg}.`;
+          }, '');
+          throw new Error(message);
+        }
+      }
+      throw new Error(error?.msg ? error.msg : 'Something went wrong.');
     }
     const res = await response.json();
     // return getMemberObjectSerializable(res);
@@ -81,8 +120,8 @@ export const updateMember = createAsyncThunk(
 
 export const deleteMember = createAsyncThunk(
   'members/deleteMember',
-  async ({id}) => {
-    const token = selectUserToken(store.getState());
+  async ({id}, {dispatch, getState}) => {
+    const token = selectUserToken(getState());
     // console.log('token:', token);
     console.log(`id=${id}`);
     await wait(WAITING_TIME);
@@ -94,7 +133,20 @@ export const deleteMember = createAsyncThunk(
       },
     });
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const error = await response.json();
+      console.log('ERROR:', error);
+      if (response.status === 401) {
+        dispatch(logoutAndResetStore());
+        throw new Error(error?.msg);
+      } else if (response.status >= 400 && response.status < 500) {
+        if (error?.errors) {
+          const message = error?.errors.reduce((pre, cur) => {
+            return `${pre} ${cur.msg}.`;
+          }, '');
+          throw new Error(message);
+        }
+      }
+      throw new Error(error?.msg ? error.msg : 'Something went wrong.');
     }
     // console.log(response);
   },
@@ -176,7 +228,7 @@ const membersSlice = createSlice({
     },
     [fetchMembers.rejected]: (state, action) => {
       state.status = 'failed';
-      console.log('fetchMembers error:', action.error);
+      console.log('fetchMembers error:', action.error.message);
       state.error = action.error.message;
     },
     [addNewMember.pending]: (state, action) => {
@@ -191,7 +243,7 @@ const membersSlice = createSlice({
     },
     [addNewMember.rejected]: (state, action) => {
       state.extras.add.status = 'failed';
-      console.log('addNewMember error:', action.error);
+      console.log('addNewMember error:', action.error.message);
       state.extras.add.error = action.error.message;
     },
     [updateMember.pending]: (state, action) => {
@@ -226,7 +278,7 @@ const membersSlice = createSlice({
           error: action.error.message,
         },
       });
-      console.log('updateMember error:', action.error);
+      console.log('updateMember error:', action.error.message);
     },
     [deleteMember.pending]: (state, action) => {
       const id = action.meta.arg.id;
@@ -258,7 +310,7 @@ const membersSlice = createSlice({
           error: action.error.message,
         },
       });
-      console.log('deleteMember error:', action.error);
+      console.log('deleteMember error:', action.error.message);
     },
   },
 });

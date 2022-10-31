@@ -35,8 +35,8 @@ export default TasksScreen = () => {
 
   useEffect(() => {
     if (requiredReload) {
-      dispatch(reloadAllTasks());
       dispatch(reloadAllMembers());
+      dispatch(reloadAllTasks());
     }
   }, [requiredReload]);
 

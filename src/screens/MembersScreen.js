@@ -34,8 +34,8 @@ export default MembersScreen = () => {
 
   useEffect(() => {
     if (requiredReload) {
-      dispatch(reloadAllMembers());
       dispatch(reloadAllTasks());
+      dispatch(reloadAllMembers());
     }
   }, [requiredReload]);
 
