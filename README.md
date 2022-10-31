@@ -17,13 +17,13 @@ Then:
 ```shell
 # go to the projects root directory
 
-$ npm start
+npm start
 ```
 
 After that open another terminal and run:
 
 ```shell
-$ npm run android
+npm run android
 ```
 
 Now, the build android app will be launce in your android virtual device or your connected devices (If there already right configuration. Otherwise follow the react-native documentation).
@@ -36,7 +36,7 @@ Let's say our rest-api is running on development server on port `9001`. That mea
 So we will map the port:
 
 ```shell
-$ adb reverse tcp:9001 tcp:9001
+adb reverse tcp:9001 tcp:9001
 ```
 
 Now, everything should work properly.
