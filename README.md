@@ -15,7 +15,7 @@ git clone git@github.com:belal-bh/react-native-tms.git
 Then:
 
 ```shell
-# go to the projects root directory
+# go to the projects root directory and run
 
 npm start
 ```
