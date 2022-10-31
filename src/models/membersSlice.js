@@ -9,7 +9,6 @@ import {getMemberObjectListSerializable} from '../helpers/memberHelpers';
 import {wait} from '../helpers/helpers';
 
 import {selectUserToken, logoutAndResetStore} from './userSlice';
-import {store} from './store';
 
 export const fetchMembers = createAsyncThunk(
   'members/fetchMembers',
