@@ -11,6 +11,7 @@ import {
 } from '../models/membersSlice';
 
 import MemberExcerpt from '../components/MemberExcerpt';
+import {reloadAllTasks} from '../models/tasksSlice';
 
 export default MembersScreen = () => {
   const navigation = useNavigation();
@@ -32,7 +33,10 @@ export default MembersScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (requiredReload) dispatch(reloadAllMembers());
+    if (requiredReload) {
+      dispatch(reloadAllMembers());
+      dispatch(reloadAllTasks());
+    }
   }, [requiredReload]);
 
   return (

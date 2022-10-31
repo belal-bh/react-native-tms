@@ -27,7 +27,7 @@ export const loginUser = createAsyncThunk('user/loginUser', async data => {
     if (response.status === 401 || response.status === 400) {
       throw new Error(error?.msg);
     }
-    throw new Error('Something went wrong.');
+    throw new Error(error?.msg ? error.msg : 'Something went wrong.');
   }
   const res = await response.json();
   // console.log('loginUser:', res);
@@ -52,13 +52,13 @@ export const registerUser = createAsyncThunk(
       if (response.status === 403 || response.status === 400) {
         if (error?.errors) {
           const message = error?.errors.reduce((pre, cur) => {
-            return `${pre}. ${cur.msg}`;
+            return `${pre} ${cur.msg}.`;
           }, '');
           throw new Error(message);
         }
         throw new Error(error?.msg);
       }
-      throw new Error('Something went wrong.');
+      throw new Error(error?.msg ? error.msg : 'Something went wrong.');
     }
     const res = await response.json();
     // console.log('registerUser:', res);
@@ -119,7 +119,7 @@ const userSlice = createSlice({
     },
     [loginUser.rejected]: (state, action) => {
       state.status = 'failed';
-      console.log('loginUser.rejected error:', action.error.message);
+      // console.log('loginUser.rejected error:', action.error.message);
       state.error = action.error.message;
     },
     [registerUser.pending]: (state, action) => {
@@ -137,7 +137,7 @@ const userSlice = createSlice({
     },
     [registerUser.rejected]: (state, action) => {
       state.status = 'failed';
-      console.log('register error:', action.error);
+      // console.log('register error:', action.error);
       state.error = action.error.message;
     },
   },

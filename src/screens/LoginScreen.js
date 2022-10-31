@@ -29,11 +29,9 @@ export default LoginScreen = () => {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(selectUserIsLoggedIn);
   const status = useSelector(selectUserStatus);
-  const error = useSelector(selectUserError);
-  console.log('error msg:', error?.msg);
 
   const isLoading = Boolean(status === 'loading');
-  const errorMessage = error?.msg ? error.msg : error;
+  const errorMessage = useSelector(selectUserError);
 
   useEffect(() => {
     dispatch(resetUserState());

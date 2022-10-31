@@ -25,12 +25,12 @@ export const fetchTasks = createAsyncThunk(
     });
     if (!response.ok) {
       const error = await response.json();
-      console.log('fetchTasks ERROR:', error);
+      console.log('ERROR:', error);
       if (response.status === 401) {
         dispatch(logoutAndResetStore());
+        throw new Error(error?.msg);
       }
-      // throw new Error(`${response.status} ${response.statusText}`);
-      throw new Error(error);
+      throw new Error(error?.msg ? error.msg : 'Something went wrong.');
     }
     const res = await response.json();
     // console.log('fetchTasks:', res);
@@ -51,7 +51,20 @@ export const addNewTask = createAsyncThunk('tasks/addNewTask', async data => {
     },
   });
   if (!response.ok) {
-    throw new Error(`${response.status} ${response.statusText}`);
+    const error = await response.json();
+    console.log('ERROR:', error);
+    if (response.status === 401) {
+      dispatch(logoutAndResetStore());
+      throw new Error(error?.msg);
+    } else if (response.status >= 400 && response.status < 500) {
+      if (error?.errors) {
+        const message = error?.errors.reduce((pre, cur) => {
+          return `${pre} ${cur.msg}.`;
+        }, '');
+        throw new Error(message);
+      }
+    }
+    throw new Error(error?.msg ? error.msg : 'Something went wrong.');
   }
   const res = await response.json();
   // return getTaskObjectSerializable(res);
@@ -76,7 +89,20 @@ export const updateTask = createAsyncThunk(
       },
     });
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const error = await response.json();
+      console.log('ERROR:', error);
+      if (response.status === 401) {
+        dispatch(logoutAndResetStore());
+        throw new Error(error?.msg);
+      } else if (response.status >= 400 && response.status < 500) {
+        if (error?.errors) {
+          const message = error?.errors.reduce((pre, cur) => {
+            return `${pre} ${cur.msg}.`;
+          }, '');
+          throw new Error(message);
+        }
+      }
+      throw new Error(error?.msg ? error.msg : 'Something went wrong.');
     }
     const res = await response.json();
     // return getTaskObjectSerializable(res);
@@ -97,7 +123,20 @@ export const deleteTask = createAsyncThunk('tasks/deleteTask', async ({id}) => {
     },
   });
   if (!response.ok) {
-    throw new Error(`${response.status} ${response.statusText}`);
+    const error = await response.json();
+    console.log('ERROR:', error);
+    if (response.status === 401) {
+      dispatch(logoutAndResetStore());
+      throw new Error(error?.msg);
+    } else if (response.status >= 400 && response.status < 500) {
+      if (error?.errors) {
+        const message = error?.errors.reduce((pre, cur) => {
+          return `${pre} ${cur.msg}.`;
+        }, '');
+        throw new Error(message);
+      }
+    }
+    throw new Error(error?.msg ? error.msg : 'Something went wrong.');
   }
   // console.log(response);
 });
@@ -265,7 +304,7 @@ const tasksSlice = createSlice({
           error: action.error.message,
         },
       });
-      console.log('deleteTask error:', action.error);
+      console.log('deleteTask error:', action.error.message);
     },
   },
 });

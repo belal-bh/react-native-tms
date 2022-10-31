@@ -11,6 +11,7 @@ import {
 } from '../models/tasksSlice';
 
 import TaskExcerpt from '../components/TaskExcerpt';
+import {reloadAllMembers} from '../models/membersSlice';
 
 export default TasksScreen = () => {
   const navigation = useNavigation();
@@ -22,9 +23,7 @@ export default TasksScreen = () => {
   const requiredReload = useSelector(selectTasksRequiredReload);
 
   const isLoading = useSelector(selectTasksStatusLoading);
-  const error = useSelector(selectTasksError);
-  console.log('error......:', JSON.stringify(error));
-  const errorMessage = error; // useSelector(selectTasksError);
+  const errorMessage = useSelector(selectTasksError);
 
   const renderTaskItem = ({item, index}) => {
     return <TaskExcerpt taskId={item} index={index} />;
@@ -35,7 +34,10 @@ export default TasksScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (requiredReload) dispatch(reloadAllTasks());
+    if (requiredReload) {
+      dispatch(reloadAllTasks());
+      dispatch(reloadAllMembers());
+    }
   }, [requiredReload]);
 
   return (
