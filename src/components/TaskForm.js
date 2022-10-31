@@ -7,7 +7,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Button,
 } from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';
@@ -24,15 +23,13 @@ import {
   resetTaskStateById,
   updateTask,
 } from '../models/tasksSlice';
-import {selectAllMembers, selectMemberIds} from '../models/membersSlice';
+import {selectAllMembers} from '../models/membersSlice';
 
-import {resetToScreen} from '../helpers/helpers';
 import OverlaySpinner from '../components/OverlaySpinner';
 
 export default TaskForm = ({taskId}) => {
   const navigation = useNavigation();
 
-  // const taskId = route.params?.taskId;
   const dispatch = useDispatch();
 
   const task = taskId
@@ -43,8 +40,6 @@ export default TaskForm = ({taskId}) => {
   const status = hasTask
     ? task.status
     : useSelector(selectTasksExtrasAddStatus);
-
-  // const status = useSelector(selectTasksExtrasAddStatus);
 
   const error = hasTask ? task.error : useSelector(selectTasksExtrasAddError);
   const members = useSelector(selectAllMembers);
@@ -168,9 +163,8 @@ export default TaskForm = ({taskId}) => {
                   )}
                   style={styles.buttonViewContainer}
                   onPress={() => {
-                    handleSubmit();
                     console.log('values:', values);
-                    // errors.title || errors.memberId ? null : handleSubmit();
+                    handleSubmit();
                   }}>
                   <Text style={styles.buttonTextView}>Submit</Text>
                 </TouchableOpacity>

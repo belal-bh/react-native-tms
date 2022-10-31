@@ -5,12 +5,8 @@ import {useNavigation} from '@react-navigation/native';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {
-  registerUser,
   logoutUser,
-  selectUserStatus,
-  selectUserError,
   selectUserIsLoggedIn,
-  resetUserState,
   selectUser,
 } from '../models/userSlice';
 

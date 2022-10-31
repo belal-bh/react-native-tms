@@ -1,17 +1,9 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  ActivityIndicator,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 
-import {resetTaskStateById, selectTaskById} from '../models/tasksSlice';
+import {selectTaskById} from '../models/tasksSlice';
 
 export default TaskExcerpt = ({taskId, index, disabledLink}) => {
   const navigation = useNavigation();
@@ -20,12 +12,6 @@ export default TaskExcerpt = ({taskId, index, disabledLink}) => {
   disabledLink = disabledLink ? true : false;
 
   const task = useSelector(state => selectTaskById(state, taskId));
-  // let task;
-  // try {
-  //   task = useSelector(state => selectTaskById(state, taskId));
-  // } catch (e) {
-  //   return null;
-  // }
 
   console.log(`task [${taskId}]:`, task);
 
@@ -34,10 +20,6 @@ export default TaskExcerpt = ({taskId, index, disabledLink}) => {
       taskId: taskId,
     });
   };
-
-  // useEffect(() => {
-  //   if (task?.id) dispatch(resetTaskStateById(taskId));
-  // }, [task?.id]);
 
   return task ? (
     <View style={styles.itemViewContainer}>

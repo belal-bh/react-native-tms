@@ -5,10 +5,7 @@ import {
 } from '@reduxjs/toolkit';
 
 import {API_URL_MEMBER, WAITING_TIME} from '../config';
-import {
-  getMemberObjectListSerializable,
-  getMemberObjectSerializable,
-} from '../helpers/memberHelpers';
+import {getMemberObjectListSerializable} from '../helpers/memberHelpers';
 import {wait} from '../helpers/helpers';
 
 import {selectUserToken} from './userSlice';

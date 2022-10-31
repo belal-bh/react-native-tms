@@ -13,7 +13,6 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-import {SelectCountry} from 'react-native-element-dropdown';
 
 import {
   addNewMember,
@@ -25,13 +24,11 @@ import {
   updateMember,
 } from '../models/membersSlice';
 
-import {resetToScreen} from '../helpers/helpers';
 import OverlaySpinner from '../components/OverlaySpinner';
 
 export default MemberForm = ({memberId}) => {
   const navigation = useNavigation();
 
-  // const memberId = route.params?.memberId;
   const dispatch = useDispatch();
 
   const member = memberId
@@ -42,8 +39,6 @@ export default MemberForm = ({memberId}) => {
   const status = hasMember
     ? member.status
     : useSelector(selectMembersExtrasAddStatus);
-
-  // const status = useSelector(selectMembersExtrasAddStatus);
 
   const error = hasMember
     ? member.error
@@ -122,9 +117,8 @@ export default MemberForm = ({memberId}) => {
                   disabled={Boolean(isLoading || errors.name)}
                   style={styles.buttonViewContainer}
                   onPress={() => {
-                    handleSubmit();
                     console.log('values:', values);
-                    // errors.title || errors.memberId ? null : handleSubmit();
+                    handleSubmit();
                   }}>
                   <Text style={styles.buttonTextView}>Submit</Text>
                 </TouchableOpacity>

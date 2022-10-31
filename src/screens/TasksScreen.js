@@ -1,19 +1,9 @@
 import React, {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Button,
-  FlatList,
-} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity, FlatList} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  fetchTasks,
   reloadAllTasks,
-  selectAllTasks,
   selectTaskIds,
   selectTasksError,
   selectTasksRequiredReload,
@@ -26,10 +16,8 @@ export default TasksScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const taskIds = useSelector(selectTaskIds);
-  // const tasks = useSelector(selectAllTasks);
 
   console.log('taskIds:', taskIds);
-  // console.log('tasks:', tasks);
 
   const requiredReload = useSelector(selectTasksRequiredReload);
 
@@ -37,7 +25,6 @@ export default TasksScreen = () => {
   const errorMessage = useSelector(selectTasksError);
 
   const renderTaskItem = ({item, index}) => {
-    // console.log('renderTaskItem: ', item, index);
     return <TaskExcerpt taskId={item} index={index} />;
   };
 

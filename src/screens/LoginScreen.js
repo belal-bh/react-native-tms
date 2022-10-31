@@ -7,7 +7,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Button,
 } from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';

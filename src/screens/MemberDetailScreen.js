@@ -5,39 +5,16 @@ import {
   View,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
-  Button,
   Alert,
   FlatList,
 } from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
-import {SelectCountry} from 'react-native-element-dropdown';
 
-import {
-  addNewMember,
-  selectMembersExtrasAddStatus,
-  selectMembersExtrasAddError,
-  resetMembersExtras,
-  selectMemberStatusById,
-  selectMemberErrorById,
-  selectMemberById,
-  resetMemberStateById,
-  deleteMember,
-  fetchMembers,
-  reloadAllMembers,
-} from '../models/membersSlice';
-import {
-  selectAllTasks,
-  selectTaskById,
-  selectTaskIds,
-  selectTaskIdsByMemberId,
-} from '../models/tasksSlice';
+import {selectMemberById, deleteMember} from '../models/membersSlice';
+import {selectTaskIdsByMemberId} from '../models/tasksSlice';
 
-import {resetToScreen} from '../helpers/helpers';
 import OverlaySpinner from '../components/OverlaySpinner';
 import TaskExcerpt from '../components/TaskExcerpt';
 
@@ -53,11 +30,7 @@ export default MemberDetailScreen = ({route}) => {
 
   const status = member?.status;
   const error = member?.error;
-  // const member = member?.memberId
-  //   ? useSelector(state => selectMemberById(state, member?.memberId))
-  //   : undefined;
 
-  // const taskIds = useSelector(selectTaskIds);
   const taskIds = hasMember
     ? useSelector(state => selectTaskIdsByMemberId(state, memberId))
     : [];
@@ -90,7 +63,6 @@ export default MemberDetailScreen = ({route}) => {
     ]);
 
   const renderTaskItem = ({item, index}) => {
-    // console.log('renderTaskItem: ', item, index);
     return <TaskExcerpt taskId={item} index={index} disabledLink={true} />;
   };
 

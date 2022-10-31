@@ -1,41 +1,13 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Button,
-  Alert,
-} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity, Alert} from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
-import {SelectCountry} from 'react-native-element-dropdown';
 
-import {
-  addNewTask,
-  selectTasksExtrasAddStatus,
-  selectTasksExtrasAddError,
-  resetTasksExtras,
-  selectTaskStatusById,
-  selectTaskErrorById,
-  selectTaskById,
-  resetTaskStateById,
-  deleteTask,
-  fetchTasks,
-  reloadAllTasks,
-} from '../models/tasksSlice';
-import {
-  selectAllMembers,
-  selectMemberById,
-  selectMemberIds,
-} from '../models/membersSlice';
+import {selectTaskById, deleteTask} from '../models/tasksSlice';
+import {selectMemberById} from '../models/membersSlice';
 
-import {resetToScreen} from '../helpers/helpers';
 import OverlaySpinner from '../components/OverlaySpinner';
 
 export default TaskDetailScreen = ({route}) => {

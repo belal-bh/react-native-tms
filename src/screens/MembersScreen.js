@@ -1,17 +1,8 @@
 import React, {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Button,
-  FlatList,
-} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity, FlatList} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  fetchMembers,
   selectMemberIds,
   selectMembersError,
   selectMembersStatusLoading,
@@ -28,8 +19,6 @@ export default MembersScreen = () => {
   console.log('memberIds:', memberIds);
 
   const requiredReload = useSelector(selectMembersRequiredReload);
-
-  // console.log('requiredReload:', requiredReload);
 
   const isLoading = useSelector(selectMembersStatusLoading);
   const errorMessage = useSelector(selectMembersError);

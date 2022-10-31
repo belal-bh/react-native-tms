@@ -4,17 +4,8 @@ import {
   createEntityAdapter,
 } from '@reduxjs/toolkit';
 
-import {
-  API_URL_AUTH_LOGIN,
-  API_URL_AUTH_REGISTER,
-  API_URL_TASK,
-  API_URL_MEMBER,
-  WAITING_TIME,
-} from '../config';
-import {
-  getTaskObjectListSerializable,
-  getTaskObjectSerializable,
-} from '../helpers/taskHelpers';
+import {API_URL_TASK, WAITING_TIME} from '../config';
+import {getTaskObjectListSerializable} from '../helpers/taskHelpers';
 import {wait} from '../helpers/helpers';
 
 import {selectUserToken} from './userSlice';

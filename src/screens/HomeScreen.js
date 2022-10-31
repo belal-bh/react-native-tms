@@ -1,14 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Button,
-} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {resetToScreen} from '../helpers/helpers';
 
 export default HomeScreen = () => {

@@ -1,17 +1,9 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  ActivityIndicator,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 
-import {resetMemberStateById, selectMemberById} from '../models/membersSlice';
+import {selectMemberById} from '../models/membersSlice';
 import {selectNumberOfTasksByMemberId} from '../models/tasksSlice';
 
 export default MemberExcerpt = ({memberId, index, disabledLink}) => {
@@ -31,10 +23,6 @@ export default MemberExcerpt = ({memberId, index, disabledLink}) => {
       memberId: memberId,
     });
   };
-
-  // useEffect(() => {
-  //   dispatch(resetMemberStateById(memberId));
-  // }, []);
 
   return member ? (
     <View style={styles.itemViewContainer}>
