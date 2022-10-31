@@ -9,7 +9,6 @@ import {getTaskObjectListSerializable} from '../helpers/taskHelpers';
 import {wait} from '../helpers/helpers';
 
 import {selectUserToken, logoutAndResetStore} from './userSlice';
-import {store} from './store';
 
 export const fetchTasks = createAsyncThunk(
   'tasks/fetchTasks',
@@ -38,43 +37,46 @@ export const fetchTasks = createAsyncThunk(
   },
 );
 
-export const addNewTask = createAsyncThunk('tasks/addNewTask', async data => {
-  const token = selectUserToken(store.getState());
-  // console.log('token:', token);
-  await wait(WAITING_TIME);
-  const response = await fetch(`${API_URL_TASK}`, {
-    method: 'POST',
-    body: JSON.stringify(data),
-    headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    console.log('ERROR:', error);
-    if (response.status === 401) {
-      dispatch(logoutAndResetStore());
-      throw new Error(error?.msg);
-    } else if (response.status >= 400 && response.status < 500) {
-      if (error?.errors) {
-        const message = error?.errors.reduce((pre, cur) => {
-          return `${pre} ${cur.msg}.`;
-        }, '');
-        throw new Error(message);
+export const addNewTask = createAsyncThunk(
+  'tasks/addNewTask',
+  async (data, {dispatch, getState}) => {
+    const token = selectUserToken(getState());
+    // console.log('token:', token);
+    await wait(WAITING_TIME);
+    const response = await fetch(`${API_URL_TASK}`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      console.log('ERROR:', error);
+      if (response.status === 401) {
+        dispatch(logoutAndResetStore());
+        throw new Error(error?.msg);
+      } else if (response.status >= 400 && response.status < 500) {
+        if (error?.errors) {
+          const message = error?.errors.reduce((pre, cur) => {
+            return `${pre} ${cur.msg}.`;
+          }, '');
+          throw new Error(message);
+        }
       }
+      throw new Error(error?.msg ? error.msg : 'Something went wrong.');
     }
-    throw new Error(error?.msg ? error.msg : 'Something went wrong.');
-  }
-  const res = await response.json();
-  // return getTaskObjectSerializable(res);
-  return res;
-});
+    const res = await response.json();
+    // return getTaskObjectSerializable(res);
+    return res;
+  },
+);
 
 export const updateTask = createAsyncThunk(
   'tasks/updateTask',
-  async ({id, data}) => {
-    const token = selectUserToken(store.getState());
+  async ({id, data}, {dispatch, getState}) => {
+    const token = selectUserToken(getState());
     // console.log('token:', token);
     console.log(
       `id=${id}, data=${data?.title ? data.title : data?.description}`,
@@ -110,36 +112,39 @@ export const updateTask = createAsyncThunk(
   },
 );
 
-export const deleteTask = createAsyncThunk('tasks/deleteTask', async ({id}) => {
-  const token = selectUserToken(store.getState());
-  // console.log('token:', token);
-  console.log(`id=${id}`);
-  await wait(WAITING_TIME);
-  const response = await fetch(`${API_URL_TASK}${id}/`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    console.log('ERROR:', error);
-    if (response.status === 401) {
-      dispatch(logoutAndResetStore());
-      throw new Error(error?.msg);
-    } else if (response.status >= 400 && response.status < 500) {
-      if (error?.errors) {
-        const message = error?.errors.reduce((pre, cur) => {
-          return `${pre} ${cur.msg}.`;
-        }, '');
-        throw new Error(message);
+export const deleteTask = createAsyncThunk(
+  'tasks/deleteTask',
+  async ({id}, {dispatch, getState}) => {
+    const token = selectUserToken(getState());
+    // console.log('token:', token);
+    console.log(`id=${id}`);
+    await wait(WAITING_TIME);
+    const response = await fetch(`${API_URL_TASK}${id}/`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      console.log('ERROR:', error);
+      if (response.status === 401) {
+        dispatch(logoutAndResetStore());
+        throw new Error(error?.msg);
+      } else if (response.status >= 400 && response.status < 500) {
+        if (error?.errors) {
+          const message = error?.errors.reduce((pre, cur) => {
+            return `${pre} ${cur.msg}.`;
+          }, '');
+          throw new Error(message);
+        }
       }
+      throw new Error(error?.msg ? error.msg : 'Something went wrong.');
     }
-    throw new Error(error?.msg ? error.msg : 'Something went wrong.');
-  }
-  // console.log(response);
-});
+    // console.log(response);
+  },
+);
 
 const tasksAdapter = createEntityAdapter({
   sortComparer: (a, b) => a.createdAt.localeCompare(b.createdAt),
@@ -212,7 +217,6 @@ const tasksSlice = createSlice({
       state.error = null;
     },
     [fetchTasks.fulfilled]: (state, action) => {
-      console.log('action==============', action);
       tasksAdapter.upsertMany(state, action);
       state.status = 'succeeded';
 
@@ -250,7 +254,6 @@ const tasksSlice = createSlice({
     },
     [updateTask.fulfilled]: (state, action) => {
       const id = action.meta.arg.id;
-      console.log('id======================', id);
       tasksAdapter.updateOne(state, {
         id,
         changes: {
