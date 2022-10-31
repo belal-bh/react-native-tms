@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -18,6 +18,9 @@ export default CustomHeaderRight = ({canGoBack, tintColor}) => {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(selectUserIsLoggedIn);
   const user = useSelector(selectUser);
+
+  console.log('R: isLoggedIn:', isLoggedIn, 'user: ', user);
+
   return isLoggedIn ? (
     <View style={{...styles.container, color: tintColor}}>
       <Text style={{...styles.username, color: tintColor}}>

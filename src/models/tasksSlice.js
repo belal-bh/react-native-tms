@@ -8,26 +8,35 @@ import {API_URL_TASK, WAITING_TIME} from '../config';
 import {getTaskObjectListSerializable} from '../helpers/taskHelpers';
 import {wait} from '../helpers/helpers';
 
-import {selectUserToken} from './userSlice';
+import {selectUserToken, logoutAndResetStore} from './userSlice';
 import {store} from './store';
 
-export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async () => {
-  const token = selectUserToken(store.getState());
-  // console.log('token:', token);
-  await wait(WAITING_TIME);
-  const response = await fetch(`${API_URL_TASK}`, {
-    headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`${response.status} ${response.statusText}`);
-  }
-  const res = await response.json();
-  // console.log('fetchTasks:', res);
-  return getTaskObjectListSerializable(res.tasks);
-});
+export const fetchTasks = createAsyncThunk(
+  'tasks/fetchTasks',
+  async (params, {dispatch, getState}) => {
+    const token = selectUserToken(getState());
+    // console.log('token:', token);
+    await wait(WAITING_TIME);
+    const response = await fetch(`${API_URL_TASK}`, {
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      console.log('fetchTasks ERROR:', error);
+      if (response.status === 401) {
+        dispatch(logoutAndResetStore());
+      }
+      // throw new Error(`${response.status} ${response.statusText}`);
+      throw new Error(error);
+    }
+    const res = await response.json();
+    // console.log('fetchTasks:', res);
+    return getTaskObjectListSerializable(res.tasks);
+  },
+);
 
 export const addNewTask = createAsyncThunk('tasks/addNewTask', async data => {
   const token = selectUserToken(store.getState());
@@ -154,6 +163,9 @@ const tasksSlice = createSlice({
         changes: {requiredReload: false},
       });
     },
+    setTasksRequiredReload(state, action) {
+      state.requiredReload = true;
+    },
   },
   extraReducers: {
     [fetchTasks.pending]: (state, action) => {
@@ -161,15 +173,15 @@ const tasksSlice = createSlice({
       state.error = null;
     },
     [fetchTasks.fulfilled]: (state, action) => {
-      if (state.status === 'loading') {
-        tasksAdapter.upsertMany(state, action);
-        state.status = 'succeeded';
-      }
+      console.log('action==============', action);
+      tasksAdapter.upsertMany(state, action);
+      state.status = 'succeeded';
+
       state.requiredReload = false;
     },
     [fetchTasks.rejected]: (state, action) => {
       state.status = 'failed';
-      console.log('fetchTasks error:', action.error);
+      console.log('fetchTasks error:', JSON.stringify(action.error.message));
       state.error = action.error.message;
     },
     [addNewTask.pending]: (state, action) => {
@@ -278,7 +290,6 @@ export const selectTaskIdsByMemberId = (state, memberId) => {
     if (cur.memberId === memberId) pre.push(cur.id);
     return pre;
   }, initialTaskIds);
-  console.log(taskIds);
   return taskIds;
 };
 
@@ -289,7 +300,6 @@ export const selectNumberOfTasksByMemberId = (state, memberId) => {
     if (cur.memberId === memberId) pre++;
     return pre;
   }, initialCount);
-  console.log(numberOfTasks);
   return numberOfTasks;
 };
 
@@ -300,6 +310,7 @@ export const {
   resetTasksState,
   resetTaskStateById,
   resetTaskRequiredReloadById,
+  setTasksRequiredReload,
 } = tasksSlice.actions;
 
 export default tasksSlice.reducer;
@@ -311,8 +322,9 @@ export const reloadAllTasks = () => async dispatch => {
   dispatch(fetchTasks());
 };
 
-export const resetTasks = () => dispatch => {
+export const resetTasks = () => async dispatch => {
   dispatch(resetTasksState());
   dispatch(resetTasksExtras());
   dispatch(tasksCleared());
+  dispatch(setTasksRequiredReload());
 };

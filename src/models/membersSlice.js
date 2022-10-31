@@ -296,7 +296,7 @@ export const reloadAllMembers = () => async dispatch => {
   dispatch(fetchMembers());
 };
 
-export const resetMembers = () => dispatch => {
+export const resetMembers = () => async dispatch => {
   dispatch(resetMembersState());
   dispatch(resetMembersExtras());
   dispatch(membersCleared());

@@ -22,7 +22,9 @@ export default TasksScreen = () => {
   const requiredReload = useSelector(selectTasksRequiredReload);
 
   const isLoading = useSelector(selectTasksStatusLoading);
-  const errorMessage = useSelector(selectTasksError);
+  const error = useSelector(selectTasksError);
+  console.log('error......:', JSON.stringify(error));
+  const errorMessage = error; // useSelector(selectTasksError);
 
   const renderTaskItem = ({item, index}) => {
     return <TaskExcerpt taskId={item} index={index} />;
