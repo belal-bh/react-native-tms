@@ -29,6 +29,7 @@ export default MembersScreen = () => {
   };
 
   useEffect(() => {
+    dispatch(reloadAllTasks());
     dispatch(reloadAllMembers());
   }, []);
 

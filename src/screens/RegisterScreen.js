@@ -53,10 +53,9 @@ export default RegisterScreen = () => {
           name: Yup.string().required('Name is required.'),
           email: Yup.string().email().required('Email is required'),
           password: Yup.string().required('Password is required'),
-          password2: Yup.string().oneOf(
-            [Yup.ref('password'), null],
-            'Passwords must match',
-          ),
+          password2: Yup.string()
+            .required('Confirmation Password is required')
+            .oneOf([Yup.ref('password'), null], 'Passwords must match'),
         })}
         onSubmit={values => {
           console.log(values);

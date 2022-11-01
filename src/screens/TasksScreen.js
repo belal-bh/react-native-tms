@@ -30,6 +30,7 @@ export default TasksScreen = () => {
   };
 
   useEffect(() => {
+    dispatch(reloadAllMembers());
     dispatch(reloadAllTasks());
   }, []);
 
