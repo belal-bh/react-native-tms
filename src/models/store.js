@@ -12,7 +12,7 @@ const rootReducer = combineReducers({
     {
       key: 'user',
       storage: AsyncStorage,
-      blacklist: ['status', 'error', 'isLoggedIn', 'token'],
+      blacklist: ['status', 'error', 'isLoggedIn', 'token', 'profile.name'],
     },
     userReducer,
   ),
