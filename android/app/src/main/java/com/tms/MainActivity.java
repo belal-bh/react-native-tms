@@ -1,7 +1,12 @@
 package com.tms;
 
+import android.os.Bundle;
+import android.view.WindowManager;
+
+import com.facebook.react.ReactActivityDelegate; 
+import com.zoontek.rnbootsplash.RNBootSplash; 
+
 import com.facebook.react.ReactActivity;
-import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 
 public class MainActivity extends ReactActivity {
@@ -14,6 +19,14 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "TMS";
   }
+
+  // ----- Add the following for react native flash icon --------
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+      RNBootSplash.init(MainActivity.this);
+      super.onCreate(savedInstanceState);      
+  }
+
 
   /**
    * Returns the instance of the {@link ReactActivityDelegate}. There the RootView is created and

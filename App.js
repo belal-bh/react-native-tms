@@ -1,5 +1,4 @@
 import React from 'react';
-import {View, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -24,6 +23,8 @@ import MembersScreen from './src/screens/MembersScreen';
 import MemberDetailScreen from './src/screens/MemberDetailScreen';
 import MemberAddScreen from './src/screens/MemberAddScreen';
 import MemberUpdateScreen from './src/screens/MemberUpdateScreen';
+
+import RNBootSplash from 'react-native-bootsplash';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -74,7 +75,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <NavigationContainer>
+        <NavigationContainer onReady={() => RNBootSplash.hide()}>
           <Stack.Navigator
             initialRouteName="Home"
             screenOptions={{

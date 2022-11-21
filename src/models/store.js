@@ -12,7 +12,7 @@ const rootReducer = combineReducers({
     {
       key: 'user',
       storage: AsyncStorage,
-      blacklist: ['status', 'error', 'isLoggedIn', 'token', 'profile.name'],
+      blacklist: ['status', 'error', 'isLoggedIn', 'token'],
     },
     userReducer,
   ),
@@ -41,9 +41,16 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+const middlewares = [thunk];
+
+if (__DEV__) {
+  const createDebugger = require("redux-flipper").default;
+  middlewares.push(createDebugger());
+}
+
 export const store = configureStore({
   reducer: persistedReducer,
-  middleware: [thunk],
+  middleware: [...middlewares],
 });
 
 export const persistor = persistStore(store);
