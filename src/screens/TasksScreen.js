@@ -16,9 +16,11 @@ import {reloadAllMembers} from '../models/membersSlice';
 import {fetchTasks as fetchTasksRQ} from '../api/tasks';
 import {useQuery} from 'react-query';
 
+import {useTasks} from '../api/rqhooks';
+
 export default TasksScreen = () => {
-  const result = useQuery(['tasks', 'all'], fetchTasksRQ);
-  console.log('RQ:', result);
+  const {data: tasks, isLoading: tasksLoading} = useTasks('all');
+  console.log('RQ:', tasksLoading, tasks);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();

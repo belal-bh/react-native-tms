@@ -20,7 +20,7 @@ export const fetchTasks = async params => {
     const error = await response.json();
     console.log('ERROR:', error);
     if (response.status === 401) {
-      dispatch(logoutAndResetStore());
+      store.dispatch(logoutAndResetStore());
       throw new Error(error?.msg);
     }
     throw new Error(error?.msg ? error.msg : 'Something went wrong.');
