@@ -13,7 +13,13 @@ import {
 import TaskExcerpt from '../components/TaskExcerpt';
 import {reloadAllMembers} from '../models/membersSlice';
 
+import {fetchTasks as fetchTasksRQ} from '../api/tasks';
+import {useQuery} from 'react-query';
+
 export default TasksScreen = () => {
+  const result = useQuery(['tasks', 'all'], fetchTasksRQ);
+  console.log('RQ:', result);
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const taskIds = useSelector(selectTaskIds);
