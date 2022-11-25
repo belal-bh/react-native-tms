@@ -13,7 +13,7 @@ export default CustomHeaderTitle = ({children, tintColor}) => {
   const isLoggedIn = useSelector(selectUserIsLoggedIn);
   const user = useSelector(selectUser);
 
-  console.log('T: isLoggedIn:', isLoggedIn, 'user: ', user);
+  // console.log('T: isLoggedIn:', isLoggedIn, 'user: ', user);
 
   useEffect(() => {
     if (

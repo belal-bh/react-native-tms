@@ -9,58 +9,50 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {useSelector, useDispatch} from 'react-redux';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {SelectCountry} from 'react-native-element-dropdown';
 
-import {
-  addNewTask,
-  selectTasksExtrasAddStatus,
-  selectTasksExtrasAddError,
-  resetTasksExtras,
-  selectTaskById,
-  resetTaskStateById,
-  updateTask,
-} from '../models/tasksSlice';
-import {selectAllMembers} from '../models/membersSlice';
-
 import OverlaySpinner from '../components/OverlaySpinner';
 
-export default TaskForm = ({taskId}) => {
+import {useAddNewTask, useUpdateTask, useMembers} from '../api/rqhooks';
+
+export default TaskForm = ({task}) => {
   const navigation = useNavigation();
 
-  const dispatch = useDispatch();
+  const addNewTaskMutation = useAddNewTask();
+  const updateTaskMutation = useUpdateTask();
 
-  const task = taskId
-    ? useSelector(state => selectTaskById(state, taskId))
-    : undefined;
+  const taskId = task?.id;
   const hasTask = taskId && task ? true : false;
 
-  const status = hasTask
-    ? task.status
-    : useSelector(selectTasksExtrasAddStatus);
+  const {
+    data: members,
+    isLoading: isMembersLoading,
+    isError: isMembersError,
+    error: membersError,
+  } = useMembers();
 
-  const error = hasTask ? task.error : useSelector(selectTasksExtrasAddError);
-  const members = useSelector(selectAllMembers);
+  const error =
+    hasTask && addNewTaskMutation.isError
+      ? addNewTaskMutation.error
+      : updateTaskMutation.error;
 
   const isLoading =
-    Boolean(status === 'loading') || Boolean(status === 'creating');
+    addNewTaskMutation.isLoading ||
+    updateTaskMutation.isLoading ||
+    isMembersLoading;
   const errorMessage = error;
 
   useEffect(() => {
-    if (!hasTask) dispatch(resetTasksExtras());
-  }, [hasTask]);
-
-  useEffect(() => {
-    if (Boolean(status === 'created')) {
-      dispatch(resetTasksExtras());
+    if (addNewTaskMutation.isSuccess) {
+      // dispatch(resetTasksExtras());
       navigation.pop();
-    } else if (Boolean(status === 'succeeded') && hasTask) {
-      dispatch(resetTaskStateById(task.id));
+    } else if (updateTaskMutation.isSuccess && hasTask) {
+      // dispatch(resetTaskStateById(task.id));
       navigation.pop();
     }
-  }, [status, hasTask, dispatch]);
+  }, [addNewTaskMutation.isSuccess, updateTaskMutation.isSuccess, hasTask]);
 
   return (
     <View style={styles.mainContainer}>
@@ -78,8 +70,8 @@ export default TaskForm = ({taskId}) => {
         })}
         onSubmit={values => {
           console.log(values);
-          if (hasTask) dispatch(updateTask({id: task.id, data: values}));
-          else dispatch(addNewTask(values));
+          if (hasTask) updateTaskMutation.mutate({id: task.id, data: values});
+          else addNewTaskMutation.mutate(values);
         }}>
         {({
           handleChange,

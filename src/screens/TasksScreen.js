@@ -1,53 +1,29 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {View, StyleSheet, Text, TouchableOpacity, FlatList} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {
-  reloadAllTasks,
-  selectTaskIds,
-  selectTasksError,
-  selectTasksRequiredReload,
-  selectTasksStatusLoading,
-} from '../models/tasksSlice';
 
 import TaskExcerpt from '../components/TaskExcerpt';
-import {reloadAllMembers} from '../models/membersSlice';
-
-import {fetchTasks as fetchTasksRQ} from '../api/tasks';
-import {useQuery} from 'react-query';
 
 import {useTasks} from '../api/rqhooks';
 
 export default TasksScreen = () => {
-  const {data: tasks, isLoading: tasksLoading} = useTasks('all');
-  console.log('RQ:', tasksLoading, tasks);
+  const {
+    data: tasks,
+    isLoading: tasksLoading,
+    isFetching: taskFetching,
+    isError,
+    error,
+  } = useTasks();
+  console.log('RQ:', tasksLoading, taskFetching, isError, error, tasks?.length);
 
   const navigation = useNavigation();
-  const dispatch = useDispatch();
-  const taskIds = useSelector(selectTaskIds);
 
-  console.log('taskIds:', taskIds);
-
-  const requiredReload = useSelector(selectTasksRequiredReload);
-
-  const isLoading = useSelector(selectTasksStatusLoading);
-  const errorMessage = useSelector(selectTasksError);
+  const isLoading = tasksLoading || taskFetching;
+  const errorMessage = error;
 
   const renderTaskItem = ({item, index}) => {
-    return <TaskExcerpt taskId={item} index={index} />;
+    return <TaskExcerpt task={item} index={index} />;
   };
-
-  useEffect(() => {
-    dispatch(reloadAllMembers());
-    dispatch(reloadAllTasks());
-  }, []);
-
-  useEffect(() => {
-    if (requiredReload) {
-      dispatch(reloadAllMembers());
-      dispatch(reloadAllTasks());
-    }
-  }, [requiredReload]);
 
   return (
     <View style={styles.mainContainer}>
@@ -89,9 +65,9 @@ export default TasksScreen = () => {
       )}
 
       <FlatList
-        data={taskIds}
+        data={tasks}
         renderItem={renderTaskItem}
-        keyExtractor={(item, index) => item}
+        keyExtractor={(item, index) => item.id}
       />
     </View>
   );

@@ -19,7 +19,7 @@ export default CustomHeaderRight = ({canGoBack, tintColor}) => {
   const isLoggedIn = useSelector(selectUserIsLoggedIn);
   const user = useSelector(selectUser);
 
-  console.log('R: isLoggedIn:', isLoggedIn, 'user: ', user);
+  // console.log('R: isLoggedIn:', isLoggedIn, 'user: ', user);
 
   return isLoggedIn ? (
     <View style={{...styles.container, color: tintColor}}>

@@ -1,23 +1,17 @@
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
 
-import {selectTaskById} from '../models/tasksSlice';
-
-export default TaskExcerpt = ({taskId, index, disabledLink}) => {
+export default TaskExcerpt = ({task, index, disabledLink}) => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
 
   disabledLink = disabledLink ? true : false;
 
-  const task = useSelector(state => selectTaskById(state, taskId));
-
-  console.log(`task [${taskId}]:`, task);
+  const taskId = task?.id;
 
   const handleClickTaskDetail = () => {
     navigation.navigate('TaskDetail', {
-      taskId: taskId,
+      taskId,
     });
   };
 

@@ -3,41 +3,74 @@ import React, {useEffect} from 'react';
 
 import {View, StyleSheet, Text, TouchableOpacity, Alert} from 'react-native';
 
-import {useSelector, useDispatch} from 'react-redux';
-
-import {selectTaskById, deleteTask} from '../models/tasksSlice';
-import {selectMemberById} from '../models/membersSlice';
-
 import OverlaySpinner from '../components/OverlaySpinner';
+
+import {useTaskById, useDeleteTask, useMemberById} from '../api/rqhooks';
 
 export default TaskDetailScreen = ({route}) => {
   const taskId = route.params.taskId;
   const navigation = useNavigation();
-  const dispatch = useDispatch();
 
-  const task = taskId
-    ? useSelector(state => selectTaskById(state, taskId))
-    : undefined;
-  const hasTask = taskId && task ? true : false;
+  const deleteTaskMutation = useDeleteTask();
 
-  const status = task?.status;
-  const error = task?.error;
-  const member = task?.memberId
-    ? useSelector(state => selectMemberById(state, task?.memberId))
-    : undefined;
+  console.log(deleteTaskMutation.status);
+
+  const {
+    data: task,
+    isLoading: taskLoading,
+    isFetching: taskFetching,
+    isError,
+    error: taskError,
+  } = useTaskById(taskId, !!taskId && deleteTaskMutation.isIdle);
+  const hasTask = task?.id && task ? true : false;
+
+  const {
+    data: member,
+    isLoading: isMemberLoading,
+    isFetching: isMemberFetching,
+    isError: isMemberError,
+    error: memberError,
+  } = useMemberById(task?.memberId, Boolean(task?.memberId));
+
+  const error = taskError
+    ? taskError
+    : deleteTaskMutation.isError
+    ? deleteTaskMutation.error
+    : memberError;
+  // const member = undefined;
 
   const isLoading =
-    Boolean(status === 'loading') || Boolean(status === 'deleting');
+    taskLoading ||
+    taskFetching ||
+    deleteTaskMutation.isLoading ||
+    deleteTaskMutation.isFetching ||
+    isMemberLoading ||
+    isMemberFetching;
+
   const errorMessage = error;
 
-  console.log('task:', task, 'status:', status);
+  console.log('member:', member);
+
+  console.log(
+    'isLoading:',
+    isLoading,
+    'hasTask',
+    hasTask,
+    'task:',
+    task,
+    // 'status:',
+    // status,
+    'member:',
+    member,
+  );
 
   const handleClickEdit = () => {
-    navigation.navigate('TaskUpdate', {taskId: task.id});
+    navigation.navigate('TaskUpdate', {task});
   };
 
   const handleClickDelete = () => {
-    dispatch(deleteTask({id: task.id}));
+    // dispatch(deleteTask({id: task.id}));
+    deleteTaskMutation.mutate({id: task.id});
   };
 
   const createTwoButtonAlert = () =>
@@ -54,18 +87,21 @@ export default TaskDetailScreen = ({route}) => {
     ]);
 
   useEffect(() => {
-    if (hasTask && task?.requiredReload) {
+    if (taskId && !hasTask && !isLoading && !deleteTaskMutation.isLoading) {
+      console.log('##################################');
       navigation.pop();
+    } else if (deleteTaskMutation.isSuccess) {
+      console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+      navigation.pop();
+      console.log('==================');
     }
-  }, [hasTask, task?.requiredReload]);
-
-  useEffect(() => {
-    if (taskId && !hasTask) {
-      navigation.pop();
-    } else if (task?.status === 'deleted') {
-      navigation.pop();
-    }
-  }, [taskId, hasTask, task?.status]);
+  }, [
+    taskId,
+    hasTask,
+    isLoading,
+    deleteTaskMutation.isLoading,
+    deleteTaskMutation.isSuccess,
+  ]);
 
   return hasTask ? (
     <View style={styles.mainContainer}>
@@ -111,8 +147,13 @@ export default TaskDetailScreen = ({route}) => {
       </View>
     </View>
   ) : (
-    <View>
-      <Text>Task does not exist!</Text>
+    <View style={styles.mainContainer}>
+      {isLoading && <OverlaySpinner color="green" message="Wait a second..." />}
+      {errorMessage && (
+        <View style={styles.errorMessageContainer}>
+          <Text style={styles.errorMessageTextView}>{errorMessage}</Text>
+        </View>
+      )}
     </View>
   );
 };
