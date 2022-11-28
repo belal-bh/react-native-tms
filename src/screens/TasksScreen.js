@@ -26,7 +26,7 @@ export default TasksScreen = () => {
   const navigation = useNavigation();
 
   const isLoading = tasksLoading || tasksFetching;
-  const errorMessage = error;
+  const errorMessage = error?.message;
 
   const renderTaskItem = ({item, index}) => {
     return <TaskExcerpt task={item} index={index} />;

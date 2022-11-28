@@ -17,7 +17,7 @@ export default MembersScreen = () => {
 
   const navigation = useNavigation();
   const isLoading = membersLoading || membersFetching;
-  const errorMessage = error;
+  const errorMessage = error?.message;
 
   const renderMemberItem = ({item, index}) => {
     return <MemberExcerpt member={item} index={index} />;

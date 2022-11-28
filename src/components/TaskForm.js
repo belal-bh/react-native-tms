@@ -33,16 +33,15 @@ export default TaskForm = ({task}) => {
     error: membersError,
   } = useMembers();
 
-  const error =
-    hasTask && addNewTaskMutation.isError
-      ? addNewTaskMutation.error
-      : updateTaskMutation.error;
+  const error = addNewTaskMutation.isError
+    ? addNewTaskMutation.error
+    : updateTaskMutation.error;
 
   const isLoading =
     addNewTaskMutation.isLoading ||
     updateTaskMutation.isLoading ||
     isMembersLoading;
-  const errorMessage = error;
+  const errorMessage = error?.message;
 
   useEffect(() => {
     if (addNewTaskMutation.isSuccess) {

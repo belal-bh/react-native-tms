@@ -47,7 +47,7 @@ export default TaskDetailScreen = ({route}) => {
     isMemberLoading ||
     isMemberFetching;
 
-  const errorMessage = error;
+  const errorMessage = error?.message;
 
   console.log('member:', member);
 

@@ -59,7 +59,7 @@ export default MemberDetailScreen = ({route}) => {
     tasksLoading ||
     tasksFetching;
 
-  const errorMessage = error;
+  const errorMessage = error?.message;
 
   const handleClickEdit = () => {
     navigation.navigate('MemberUpdate', {member});

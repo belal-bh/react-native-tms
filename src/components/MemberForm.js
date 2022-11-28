@@ -25,14 +25,13 @@ export default MemberForm = ({member}) => {
   const memberId = member?.id;
   const hasMember = memberId && member ? true : false;
 
-  const error =
-    hasMember && addNewMemberMutation.isError
-      ? addNewMemberMutation.error
-      : updateMemberMutation.error;
+  const error = addNewMemberMutation.isError
+    ? addNewMemberMutation.error
+    : updateMemberMutation.error;
 
   const isLoading =
     addNewMemberMutation.isLoading || updateMemberMutation.isLoading;
-  const errorMessage = error;
+  const errorMessage = error?.message;
 
   useEffect(() => {
     if (addNewMemberMutation.isSuccess) {
