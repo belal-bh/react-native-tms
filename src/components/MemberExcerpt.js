@@ -1,26 +1,30 @@
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
 
-import {selectMemberById} from '../models/membersSlice';
-import {selectNumberOfTasksByMemberId} from '../models/tasksSlice';
+import {useTasks} from '../api/rqhooks';
+import {getNumberOfTasksByMemberId} from '../api/utils/members';
 
-export default MemberExcerpt = ({memberId, index, disabledLink}) => {
+export default MemberExcerpt = ({member, index, disabledLink}) => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
 
   disabledLink = disabledLink ? true : false;
 
-  const member = useSelector(state => selectMemberById(state, memberId));
+  const memberId = member?.id;
 
-  const numberOfTasks = useSelector(state =>
-    selectNumberOfTasksByMemberId(state, memberId),
-  );
+  const {
+    data: allTasks,
+    isLoading: tasksLoading,
+    isFetching: tasksFetching,
+    isError,
+    error,
+  } = useTasks(!!memberId);
+
+  const numberOfTasks = getNumberOfTasksByMemberId(allTasks, memberId);
 
   const handleClickMemberDetail = () => {
     navigation.navigate('MemberDetail', {
-      memberId: memberId,
+      memberId,
     });
   };
 

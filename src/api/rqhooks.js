@@ -7,7 +7,13 @@ import {
   deleteTask,
 } from './utils/tasks';
 
-import {fetchMembers, fetchMemberById} from './utils/members';
+import {
+  fetchMembers,
+  fetchMemberById,
+  addNewMember,
+  updateMember,
+  deleteMember,
+} from './utils/members';
 
 export const useTasks = (enabled = true) => {
   const queryResult = useQuery(['tasks'], fetchTasks, {
@@ -77,4 +83,40 @@ export const useMemberById = (memberId, enabled = true) => {
     staleTime: 10,
   });
   return queryResult;
+};
+
+export const useAddNewMember = () => {
+  const queryClient = useQueryClient();
+  return useMutation(addNewMember, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['members']);
+    },
+  });
+};
+
+export const useUpdateMember = () => {
+  const queryClient = useQueryClient();
+  return useMutation(updateMember, {
+    onSuccess: (data, variables, context) => {
+      // console.log('variables:', variables);
+      // console.log('context:', context);
+      queryClient.invalidateQueries(['members', variables.id]);
+      queryClient.invalidateQueries(['members']);
+    },
+  });
+};
+
+export const useDeleteMember = () => {
+  const queryClient = useQueryClient();
+  return useMutation(deleteMember, {
+    onSuccess: (data, variables, context) => {
+      console.log('variables:', variables);
+      // console.log('context:', context);
+      // queryClient.invalidateQueries(['members', variables.id]);
+      queryClient.invalidateQueries(['members']);
+    },
+    onError: error => {
+      console.log('-----------------------------', error);
+    },
+  });
 };

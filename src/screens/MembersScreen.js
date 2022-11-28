@@ -1,44 +1,27 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {View, StyleSheet, Text, TouchableOpacity, FlatList} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {
-  selectMemberIds,
-  selectMembersError,
-  selectMembersStatusLoading,
-  selectMembersRequiredReload,
-  reloadAllMembers,
-} from '../models/membersSlice';
 
 import MemberExcerpt from '../components/MemberExcerpt';
-import {reloadAllTasks} from '../models/tasksSlice';
+
+import {useMembers} from '../api/rqhooks';
 
 export default MembersScreen = () => {
+  const {
+    data: members,
+    isLoading: membersLoading,
+    isFetching: membersFetching,
+    isError,
+    error,
+  } = useMembers();
+
   const navigation = useNavigation();
-  const dispatch = useDispatch();
-  const memberIds = useSelector(selectMemberIds);
-  console.log('memberIds:', memberIds);
-
-  const requiredReload = useSelector(selectMembersRequiredReload);
-
-  const isLoading = useSelector(selectMembersStatusLoading);
-  const errorMessage = useSelector(selectMembersError);
+  const isLoading = membersLoading || membersFetching;
+  const errorMessage = error;
 
   const renderMemberItem = ({item, index}) => {
-    return <MemberExcerpt memberId={item} index={index} />;
+    return <MemberExcerpt member={item} index={index} />;
   };
-
-  useEffect(() => {
-    dispatch(reloadAllTasks());
-    dispatch(reloadAllMembers());
-  }, []);
-
-  useEffect(() => {
-    if (requiredReload) {
-      dispatch(reloadAllTasks());
-      dispatch(reloadAllMembers());
-    }
-  }, [requiredReload]);
 
   return (
     <View style={styles.mainContainer}>
@@ -79,9 +62,9 @@ export default MembersScreen = () => {
         </View>
       )}
       <FlatList
-        data={memberIds}
-        renderItem={props => renderMemberItem(props)}
-        keyExtractor={(item, index) => item}
+        data={members}
+        renderItem={renderMemberItem}
+        keyExtractor={(item, index) => item.id}
       />
     </View>
   );

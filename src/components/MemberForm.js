@@ -7,60 +7,44 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Button,
 } from 'react-native';
 
-import {useSelector, useDispatch} from 'react-redux';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
-import {
-  addNewMember,
-  selectMembersExtrasAddStatus,
-  selectMembersExtrasAddError,
-  resetMembersExtras,
-  selectMemberById,
-  resetMemberStateById,
-  updateMember,
-} from '../models/membersSlice';
-
 import OverlaySpinner from '../components/OverlaySpinner';
 
-export default MemberForm = ({memberId}) => {
+import {useAddNewMember, useUpdateMember} from '../api/rqhooks';
+
+export default MemberForm = ({member}) => {
   const navigation = useNavigation();
 
-  const dispatch = useDispatch();
+  const addNewMemberMutation = useAddNewMember();
+  const updateMemberMutation = useUpdateMember();
 
-  const member = memberId
-    ? useSelector(state => selectMemberById(state, memberId))
-    : undefined;
+  const memberId = member?.id;
   const hasMember = memberId && member ? true : false;
 
-  const status = hasMember
-    ? member.status
-    : useSelector(selectMembersExtrasAddStatus);
-
-  const error = hasMember
-    ? member.error
-    : useSelector(selectMembersExtrasAddError);
+  const error =
+    hasMember && addNewMemberMutation.isError
+      ? addNewMemberMutation.error
+      : updateMemberMutation.error;
 
   const isLoading =
-    Boolean(status === 'loading') || Boolean(status === 'creating');
+    addNewMemberMutation.isLoading || updateMemberMutation.isLoading;
   const errorMessage = error;
 
   useEffect(() => {
-    if (!hasMember) dispatch(resetMembersExtras());
-  }, [hasMember]);
-
-  useEffect(() => {
-    if (Boolean(status === 'created')) {
-      dispatch(resetMembersExtras());
+    if (addNewMemberMutation.isSuccess) {
       navigation.pop();
-    } else if (Boolean(status === 'succeeded') && hasMember) {
-      dispatch(resetMemberStateById(member.id));
+    } else if (updateMemberMutation.isSuccess && hasMember) {
       navigation.pop();
     }
-  }, [status, hasMember, dispatch]);
+  }, [
+    addNewMemberMutation.isSuccess,
+    updateMemberMutation.isSuccess,
+    hasMember,
+  ]);
 
   return (
     <View style={styles.mainContainer}>
@@ -74,8 +58,9 @@ export default MemberForm = ({memberId}) => {
         })}
         onSubmit={values => {
           console.log(values);
-          if (hasMember) dispatch(updateMember({id: member.id, data: values}));
-          else dispatch(addNewMember(values));
+          if (hasMember)
+            updateMemberMutation.mutate({id: member.id, data: values});
+          else addNewMemberMutation.mutate(values);
         }}>
         {({
           handleChange,

@@ -10,43 +10,63 @@ import {
   FlatList,
 } from 'react-native';
 
-import {useSelector, useDispatch} from 'react-redux';
-
-import {selectMemberById, deleteMember} from '../models/membersSlice';
-import {selectTaskIdsByMemberId} from '../models/tasksSlice';
-
 import OverlaySpinner from '../components/OverlaySpinner';
 import TaskExcerpt from '../components/TaskExcerpt';
+
+import {useMemberById, useDeleteMember, useTasks} from '../api/rqhooks';
 
 export default MemberDetailScreen = ({route}) => {
   const memberId = route.params.memberId;
   const navigation = useNavigation();
-  const dispatch = useDispatch();
 
-  const member = memberId
-    ? useSelector(state => selectMemberById(state, memberId))
-    : undefined;
-  const hasMember = memberId && member ? true : false;
+  const deleteMemberMutation = useDeleteMember();
 
-  const status = member?.status;
-  const error = member?.error;
+  console.log(deleteMemberMutation.status);
 
-  const taskIds = hasMember
-    ? useSelector(state => selectTaskIdsByMemberId(state, memberId))
-    : [];
+  const {
+    data: member,
+    isLoading: memberLoading,
+    isFetching: memberFetching,
+    isError: isMemberError,
+    error: memberError,
+  } = useMemberById(memberId, !!memberId && deleteMemberMutation.isIdle);
+  const hasMember = member?.id && member ? true : false;
+
+  const {
+    data: allTasks,
+    isLoading: tasksLoading,
+    isFetching: tasksFetching,
+    isError: isTasksError,
+    error: tasksError,
+  } = useTasks(!!member && !!memberId && deleteMemberMutation.isIdle);
+
+  const tasks =
+    allTasks && allTasks?.length > 0
+      ? allTasks.filter(task => task?.memberId === memberId)
+      : [];
+
+  const error = isMemberError
+    ? memberError
+    : deleteMemberMutation.isError
+    ? deleteMemberMutation.error
+    : tasksError;
 
   const isLoading =
-    Boolean(status === 'loading') || Boolean(status === 'deleting');
+    memberLoading ||
+    memberFetching ||
+    deleteMemberMutation.isLoading ||
+    deleteMemberMutation.isFetching ||
+    tasksLoading ||
+    tasksFetching;
+
   const errorMessage = error;
 
-  console.log('member:', member, 'status:', status);
-
   const handleClickEdit = () => {
-    navigation.navigate('MemberUpdate', {memberId: member.id});
+    navigation.navigate('MemberUpdate', {member});
   };
 
   const handleClickDelete = () => {
-    dispatch(deleteMember({id: member.id}));
+    deleteMemberMutation.mutate({id: member.id});
   };
 
   const createTwoButtonAlert = () =>
@@ -63,22 +83,30 @@ export default MemberDetailScreen = ({route}) => {
     ]);
 
   const renderTaskItem = ({item, index}) => {
-    return <TaskExcerpt taskId={item} index={index} disabledLink={true} />;
+    return <TaskExcerpt task={item} index={index} disabledLink={true} />;
   };
 
   useEffect(() => {
-    if (hasMember && member?.requiredReload) {
+    if (
+      memberId &&
+      !hasMember &&
+      !isLoading &&
+      !deleteMemberMutation.isLoading
+    ) {
+      console.log('##################################');
       navigation.pop();
+    } else if (deleteMemberMutation.isSuccess) {
+      console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+      navigation.pop();
+      console.log('==================');
     }
-  }, [hasMember, member?.requiredReload]);
-
-  useEffect(() => {
-    if (memberId && !hasMember) {
-      navigation.pop();
-    } else if (member?.status === 'deleted') {
-      navigation.pop();
-    }
-  }, [memberId, hasMember, member?.status]);
+  }, [
+    memberId,
+    hasMember,
+    isLoading,
+    deleteMemberMutation.isLoading,
+    deleteMemberMutation.isSuccess,
+  ]);
 
   return hasMember ? (
     <View style={styles.mainContainer}>
@@ -114,14 +142,20 @@ export default MemberDetailScreen = ({route}) => {
       </View>
 
       <FlatList
-        data={taskIds}
+        data={tasks}
         renderItem={renderTaskItem}
-        keyExtractor={(item, index) => item}
+        keyExtractor={(item, index) => item.id}
       />
     </View>
   ) : (
-    <View>
-      <Text>Member does not exist!</Text>
+    <View style={styles.mainContainer}>
+      {isLoading && <OverlaySpinner color="green" message="Wait a second..." />}
+      {errorMessage && (
+        <View style={styles.errorMessageContainer}>
+          <Text style={styles.errorMessageTextView}>{errorMessage}</Text>
+        </View>
+      )}
+      {!isLoading && <Text>Member does not exist!</Text>}
     </View>
   );
 };
