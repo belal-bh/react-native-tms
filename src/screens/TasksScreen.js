@@ -10,15 +10,22 @@ export default TasksScreen = () => {
   const {
     data: tasks,
     isLoading: tasksLoading,
-    isFetching: taskFetching,
+    isFetching: tasksFetching,
     isError,
     error,
   } = useTasks();
-  console.log('RQ:', tasksLoading, taskFetching, isError, error, tasks?.length);
+  console.log(
+    'RQ:',
+    tasksLoading,
+    tasksFetching,
+    isError,
+    error,
+    tasks?.length,
+  );
 
   const navigation = useNavigation();
 
-  const isLoading = tasksLoading || taskFetching;
+  const isLoading = tasksLoading || tasksFetching;
   const errorMessage = error;
 
   const renderTaskItem = ({item, index}) => {
