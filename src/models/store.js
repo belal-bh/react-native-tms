@@ -44,7 +44,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 const middlewares = [thunk];
 
 if (__DEV__) {
-  const createDebugger = require("redux-flipper").default;
+  const createDebugger = require('redux-flipper').default;
   middlewares.push(createDebugger());
 }
 
